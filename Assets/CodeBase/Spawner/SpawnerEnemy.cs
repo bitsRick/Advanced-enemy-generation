@@ -6,33 +6,39 @@ using UnityEngine.Serialization;
 
 namespace CodeBase.Spawner
 {
-    public class SpawnerEnemy:MonoBehaviour
+    public class SpawnerEnemy:EnemyPool
     {
-        [SerializeField] private Enemy _enemy;
+        [SerializeField] private GameObject _enemy;
         [SerializeField] private Transform _pointsMove;
         [SerializeField] private float _startTimeOfCreation;
-        [SerializeField] private float _repeatingCreationTime;
-        [SerializeField] private int _maxNumberOfEnemy = 1;
-        
-        private int _numberOfEnemy = 0;
+
+        private float _timeCreation;
 
         private void Start()
         {
-            InvokeRepeating(nameof(CreateEnemies),_startTimeOfCreation,_repeatingCreationTime);
+            Initilization(_enemy);
         }
 
         private void Update()
         {
-            if (_numberOfEnemy == _maxNumberOfEnemy) 
-                CancelInvoke(nameof(CreateEnemies));
+            _timeCreation += Time.deltaTime;
+            
+            if (_timeCreation > _startTimeOfCreation)
+            {
+                _timeCreation = 0;
+
+                if (TryGetEnemy(out GameObject enemy))
+                {
+                    SetSpawnEnemy(enemy);
+                }
+            }
         }
         
-        private void CreateEnemies()
+        private void SetSpawnEnemy(GameObject enemy)
         {
-            Enemy enemy = Instantiate(_enemy, transform.position, Quaternion.identity);
-            enemy.AddArrayOfMovementPoints(_pointsMove.GetComponentsInChildren<Transform>());
-            enemy.transform.parent = transform;
-            _numberOfEnemy++;
+            enemy.transform.position = transform.position;
+            enemy.GetComponent<Enemy>().AddArrayOfMovementPoints(_pointsMove.GetComponentsInChildren<Transform>());
+            enemy.SetActive(true);
         }
     }
 }

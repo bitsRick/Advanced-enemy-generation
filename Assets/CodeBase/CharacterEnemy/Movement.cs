@@ -12,7 +12,8 @@ namespace CodeBase.CharacterEnemy
 
         private Transform[] _points;
         private Transform _nextPosition;
-        private int _targetLenght = IndexFirstPositionPoint;
+        
+        private int _targetLenght;
 
         private void Update()
         {
@@ -22,6 +23,7 @@ namespace CodeBase.CharacterEnemy
         public void SetArrayOfPoints(Transform[] points)
         {
             _points = points;
+            _targetLenght = IndexFirstPositionPoint;
             _nextPosition = _points[_targetLenght];
         }
 
@@ -36,21 +38,12 @@ namespace CodeBase.CharacterEnemy
             }
             else
             {
-                if (TryGetEndPosition())
-                    Destroy(gameObject);
+                if (_targetLenght < _points.Length && CheckPointTargetLength())
+                {
+                    _targetLenght++;
+                    _nextPosition = _points[_targetLenght];
+                }
             }
-        }
-
-        private bool TryGetEndPosition()
-        {
-            if (_targetLenght < _points.Length && CheckPointTargetLength())
-            {
-                _targetLenght++;
-                _nextPosition = _points[_targetLenght];
-                return false;
-            }
-
-            return true;
         }
 
         private bool CheckPointTargetLength()

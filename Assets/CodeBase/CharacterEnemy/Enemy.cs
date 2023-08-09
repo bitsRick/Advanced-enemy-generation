@@ -17,6 +17,13 @@ namespace CodeBase.CharacterEnemy
         {
             _movement.SetArrayOfPoints(movementPoints);
         }
-        
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.GetComponent<Castle>())
+            {
+                gameObject.SetActive(false);
+            }
+        }
     }
 }
